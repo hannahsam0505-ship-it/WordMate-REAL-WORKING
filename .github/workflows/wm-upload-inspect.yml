@@ -1,0 +1,27 @@
+name: WM Upload Inspect
+on:
+  push:
+    branches: [wm-upload-inspect]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect prepared chunks
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in .wm-upload/*.b64gz; do
+            out="${f}.decoded"
+            base64 -d "$f" | gzip -dc > "$out"
+            echo "===== $f ====="
+            echo "BYTES=$(wc -c < "$out") LINES=$(wc -l < "$out")"
+            echo "--- FIRST ---"
+            head -c 180 "$out" | tr '\n' ' '
+            echo
+            echo "--- LAST ---"
+            tail -c 180 "$out" | tr '\n' ' '
+            echo
+          done
