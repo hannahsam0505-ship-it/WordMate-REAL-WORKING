@@ -12976,15 +12976,28 @@ function wmFastResolveCompletionTransition_(payload, progressObj, setId) {
 }
 
 function wmFastUpdateHistoryForCompletedLevel_(progressObj, completedLevel, completedRounds) {
-  var levels = String(progressObj['히스토리레벨'] || progressObj['완료된레벨'] || '').split('|').map(function(v){ return String(v || '').trim(); }).filter(Boolean);
-  var counts = String(progressObj['히스토리횟수'] || progressObj['완료횟수'] || '').split('|').map(function(v){ return String(v || '').trim(); });
+  var rawLevels = String(progressObj['히스토리레벨'] || progressObj['완료된레벨'] || '').split('|');
+  var rawCounts = String(progressObj['히스토리횟수'] || progressObj['완료횟수'] || '').split('|');
+  var levels = [];
+  var counts = [];
+  rawLevels.forEach(function(value, index) {
+    var levelText = String(value || '').trim();
+    if (!/^(3|4|5|6|7|8|9|10|11|12|13)$/.test(levelText)) return;
+    var existingIndex = levels.indexOf(levelText);
+    if (existingIndex < 0) {
+      levels.push(levelText);
+      counts.push(String(wmNormalizeCurrentProgressRoundValue_(rawCounts[index])));
+    }
+  });
   var levelText = String(completedLevel || '');
+  if (!/^(3|4|5|6|7|8|9|10|11|12|13)$/.test(levelText)) return {levels:levels.join('|'), counts:counts.join('|')};
   var idx = levels.indexOf(levelText);
+  var countText = String(wmNormalizeCurrentProgressRoundValue_(completedRounds));
   if (idx < 0) {
     levels.push(levelText);
-    counts.push(String(completedRounds || 0));
+    counts.push(countText);
   } else {
-    counts[idx] = String(completedRounds || 0);
+    counts[idx] = countText;
   }
   return {levels:levels.join('|'), counts:counts.join('|')};
 }
@@ -13139,6 +13152,21 @@ function wmFastWriteCurrentProgress_(ss, payload, recordId, isCompleted, transit
       wmFastProgressSet_(state, '레벨진행률', wmFormatCurrentProgressPercentText_(levelProgress));
       wmFastProgressSet_(state, '레벨완료여부', 'N');
     }
+  }
+
+  /* WM_HISTORY_SAVE_CURRENT_LEVEL_V1
+   * 기존 한 번의 현재진행_DB 저장에 히스토리 두 항목을 함께 반영합니다.
+   * 과거 레벨/횟수는 보존하고, 새 레벨 미학습은 0, 학습 이후는 실제 진행회차입니다.
+   * 추가 DB 조회/저장 또는 학습기록 재계산은 하지 않습니다. */
+  var historyCurrentLevel = Number(String(state.obj['현재레벨'] || '').replace(/[^0-9]/g, ''));
+  if (historyCurrentLevel >= 3 && historyCurrentLevel <= 13) {
+    var historyCurrentRound = wmNormalizeCurrentProgressRoundValue_(state.obj['순차완주회차']);
+    if (!(isCompleted && transitionType === 'LEVEL_COMPLETE')) {
+      historyCurrentRound = Math.max(1, historyCurrentRound);
+    }
+    var currentHistory = wmFastUpdateHistoryForCompletedLevel_(state.obj, historyCurrentLevel, historyCurrentRound);
+    wmFastProgressSet_(state, '히스토리레벨', currentHistory.levels);
+    wmFastProgressSet_(state, '히스토리횟수', currentHistory.counts);
   }
 
   if (state.rowNum > 1) {
@@ -18672,4 +18700,121 @@ function wmDiagnoseStudentManagementRead() {
   };
   Logger.log('WM_STUDENT_DB_DIAG=' + JSON.stringify(result));
   return result;
+}
+
+
+/* WM_HISTORY_REPAIR_ONCE_V1
+ * Apps Script 편집기에서 수동 실행합니다. 로그인/학습/저장/트리거에서는 호출하지 않습니다.
+ * 학습이 없는 시간에 실행합니다. 먼저 wmPreviewLearningHistoryRepair의 before/after를 확인합니다.
+ * wmApplyLearningHistoryRepair는 히스토리레벨/히스토리횟수 두 셀만 복구합니다.
+ */
+function wmBuildLearningHistoryRepairPlan_(progressValues, recordValues) {
+  var ph = (progressValues[0] || []).map(wmNormalizeHeaderKeyForCurrentProgress_);
+  var rh = (recordValues[0] || []).map(wmNormalizeHeaderKeyForCurrentProgress_);
+  function column(headers, name) {
+    var index = headers.indexOf(wmNormalizeHeaderKeyForCurrentProgress_(name));
+    if (index < 0) throw new Error('히스토리 복구 필수 열 없음: ' + name);
+    return index;
+  }
+  var pid = column(ph, '학생ID'), pl = column(ph, '현재레벨');
+  var hl = column(ph, '히스토리레벨'), hc = column(ph, '히스토리횟수');
+  var rid = column(rh, '학생ID'), rs = column(rh, 'Set_ID');
+  var rd = column(rh, '학습날짜'), rc = column(rh, '완료상태');
+  var rr = rh.indexOf('완료');
+  var logsByStudent = {};
+  var seenStudents = {};
+  recordValues.slice(1).forEach(function(row, index) {
+    var sid = String(row[rid] || '').trim().toUpperCase();
+    var setId = normalizeLevelPlainSetId_(row[rs]);
+    if (!sid || !setId || !isValidLearningMapSetId_(setId)) return;
+    if (!logsByStudent[sid]) logsByStudent[sid] = [];
+    logsByStudent[sid].push({
+      setId:setId, sortTime:getLearningRecordSortTime_(row[rd]), rowIndex:index + 1,
+      complete:wmSafeIsCompleteStatusForCurrentProgress_(row[rc]) || (rr >= 0 && /^(?:[1-3](?:회차|회)?)$/.test(String(row[rr] || '').trim()))
+    });
+  });
+  var changes = [];
+  var skipped = [];
+  progressValues.slice(1).forEach(function(row, index) {
+    var sid = String(row[pid] || '').trim().toUpperCase();
+    if (!sid) return;
+    if (seenStudents[sid]) throw new Error('현재진행_DB 학생ID 중복: ' + sid);
+    seenStudents[sid] = true;
+    var level = Number(String(row[pl] || '').replace(/[^0-9]/g, ''));
+    if (!(level >= 3 && level <= 13)) {
+      skipped.push({studentId:sid, row:index + 2, reason:'현재레벨 확인 불가'});
+      return;
+    }
+    var logs = logsByStudent[sid] || [];
+    var rebuilt = wmBuildCurrentProgressLevelHistoryCache_(logs.filter(function(log){ return log.complete; }), level, logs);
+    var before = [String(row[hl] || ''), String(row[hc] || '')];
+    var oldLevels = before[0].split('|');
+    var oldCounts = before[1].split('|');
+    var aligned = oldLevels.length === oldCounts.length;
+    var merged = {'히스토리레벨':rebuilt.히스토리레벨, '히스토리횟수':rebuilt.히스토리횟수};
+    var unresolved = false;
+    oldLevels.forEach(function(oldLevel, i) {
+      var n = Number(oldLevel);
+      if (!(n >= 3 && n <= 13) || n === level) return;
+      var hasEvidence = logs.some(function(log){ return Number(log.setId.split('-')[0]) === n; });
+      if (!hasEvidence && !aligned) { unresolved = true; return; }
+      // 정상 대응된 과거 횟수는 보존합니다. 위치가 어긋난 횟수는 학습기록으로만 복원합니다.
+      if (aligned) {
+        var pair = wmFastUpdateHistoryForCompletedLevel_(merged, n, oldCounts[i]);
+        merged.히스토리레벨 = pair.levels;
+        merged.히스토리횟수 = pair.counts;
+      }
+    });
+    if (unresolved) {
+      skipped.push({studentId:sid, row:index + 2, reason:'과거 횟수 대응 불일치 및 학습기록 부족'});
+      return;
+    }
+    var ml = merged.히스토리레벨.split('|'), mc = merged.히스토리횟수.split('|');
+    var pairs = ml.map(function(v, i){ return {level:Number(v), round:wmNormalizeCurrentProgressRoundValue_(mc[i])}; });
+    pairs.sort(function(a,b){ return a.level === level ? 1 : b.level === level ? -1 : a.level-b.level; });
+    var after = [pairs.map(function(p){ return p.level; }).join('|'), pairs.map(function(p){ return p.round; }).join('|')];
+    if (before[0] !== after[0] || before[1] !== after[1]) changes.push({studentId:sid, row:index + 2, before:before, after:after});
+  });
+  return {columns:[hl + 1, hc + 1], changes:changes, skipped:skipped};
+}
+
+function wmPreviewLearningHistoryRepair() {
+  return wmRunLearningHistoryRepair_(false);
+}
+
+function wmApplyLearningHistoryRepair() {
+  return wmRunLearningHistoryRepair_(true);
+}
+
+function wmRunLearningHistoryRepair_(apply) {
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(1000)) throw new Error('다른 관리 작업이 실행 중입니다. 잠시 후 다시 실행해 주세요.');
+  try {
+    var ss = getLmsSpreadsheet_();
+    var progressSheet = ss.getSheetByName('8.현재진행_DB');
+    var recordSheet = ss.getSheetByName('2.학습기록_DB');
+    if (!progressSheet || !recordSheet) throw new Error('현재진행_DB 또는 학습기록_DB 없음');
+    var progressValues = progressSheet.getDataRange().getDisplayValues();
+    var plan = wmBuildLearningHistoryRepairPlan_(progressValues, recordSheet.getDataRange().getDisplayValues());
+    Logger.log(JSON.stringify({apply:!!apply, spreadsheetId:ss.getId(), plan:plan}));
+    if (apply) {
+      plan.changes.forEach(function(change) {
+        var freshRow = progressSheet.getRange(change.row, 1, 1, progressValues[0].length).getDisplayValues()[0];
+        if (JSON.stringify(freshRow) !== JSON.stringify(progressValues[change.row - 1])) {
+          throw new Error('복구 중 데이터 변경 감지. 실행 로그를 확인하고 미리보기부터 다시 실행하세요: ' + change.studentId);
+        }
+        if (plan.columns[1] === plan.columns[0] + 1) {
+          progressSheet.getRange(change.row, plan.columns[0], 1, 2).setValues([change.after]);
+        } else {
+          progressSheet.getRange(change.row, plan.columns[0]).setValue(change.after[0]);
+          progressSheet.getRange(change.row, plan.columns[1]).setValue(change.after[1]);
+        }
+      });
+      SpreadsheetApp.flush();
+      wmClearRuntimeCachesForStudents_(plan.changes.map(function(change){ return change.studentId; }));
+    }
+    return {applied:!!apply, changedStudents:plan.changes.length, changes:plan.changes, skipped:plan.skipped};
+  } finally {
+    lock.releaseLock();
+  }
 }
