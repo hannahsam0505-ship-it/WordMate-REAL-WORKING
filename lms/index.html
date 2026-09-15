@@ -2623,7 +2623,7 @@ HTML/CSS 배치·크기·여백·폰트·아이콘·표·그래프·푸터 구�
         <div class="wm-filter-title">접수자료 검색</div>
         <div class="wm-prestudy-admin-toolbar">
           <label class="wm-prestudy-admin-field wide">검색<input id="wmPreStudyQuery" type="text" placeholder="학생이름 · 학부모 · 휴대폰 · 주문번호 · 조사서번호" /></label>
-          <label class="wm-prestudy-admin-field">처리상태<select id="wmPreStudyStatusFilter"><option value="">전체</option><option value="신규">신규</option><option value="확인완료">확인완료</option><option value="승인완료">승인완료</option></select></label>
+          <label class="wm-prestudy-admin-field">처리상태<select id="wmPreStudyStatusFilter"><option value="">전체</option><option value="신규">신규</option><option value="확인중">확인중</option><option value="승인">승인</option><option value="보류">보류</option><option value="취소">취소</option></select></label>
           <button type="button" class="wm-action-btn" id="wmPreStudySearchBtn">조회</button>
           <button type="button" class="wm-action-btn sub" id="wmPreStudyRefreshBtn">새로고침</button>
         </div>
@@ -5914,7 +5914,7 @@ loadReports();
     }
     function wmPreStudyStatusPill_(status){
       const text=String(status || '-');
-      const cls=text==='신규'?'is-new':(text==='확인완료'?'is-checked':(text==='승인완료'?'is-approved':''));
+      const cls=text==='신규'?'is-new':(text==='확인중'?'is-checked':(text==='승인'?'is-approved':''));
       return '<span class="wm-prestudy-status-pill '+cls+'">'+wmPreStudyEscape_(text)+'</span>';
     }
     function wmPreStudyRenderList_(records,total){
@@ -5943,7 +5943,7 @@ loadReports();
     }
     function wmPreStudyRenderDetail_(r){
       const host=document.getElementById('wmPreStudyDetail'); if(!host) return;
-      const approved=String(r.processing_status || '')==='승인완료';
+      const approved=String(r.processing_status || '')==='승인';
       host.style.display='block';
       const meta='<div class="wm-prestudy-detail-meta">제출 '+wmPreStudyEscape_(r.submitted_at)+' · 주문번호 '+wmPreStudyEscape_(r.order_id)+' · 결제일 '+wmPreStudyEscape_(r.payment_date)+' · 처리상태 '+wmPreStudyEscape_(r.processing_status)+' · 반영상태 '+wmPreStudyEscape_(r.wordmate_apply_status || '미반영')+'</div>';
       host.innerHTML='<div class="wm-prestudy-detail-top"><div><div class="wm-prestudy-detail-id">'+wmPreStudyEscape_(r.prestudy_id)+'</div>'+meta+'</div><button type="button" class="wm-action-btn sub" id="wmPreStudyDetailClose">닫기</button></div>'
