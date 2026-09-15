@@ -1177,6 +1177,38 @@ const WM_APPS_SCRIPT_URL = WM_CONFIG.APPS_SCRIPT_URL;
     .wm-lms-logout-btn { border:1px solid var(--wm-line); background:#fff; color:var(--wm-dark); border-radius:999px; padding:9px 13px; font-size:13px; font-weight:900; cursor:pointer; }
     @media (max-width:520px) { .wm-lms-login-card { padding:32px 22px 30px; border-radius:22px; } .wm-lms-login-title { font-size:24px !important; } }
 
+    /* WM_PRESTUDY_ADMIN_UI_V1_20260915 */
+    #panel-preStudy .wm-prestudy-admin-toolbar{display:flex;align-items:end;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+    #panel-preStudy .wm-prestudy-admin-field{display:flex;flex-direction:column;gap:5px;min-width:150px;font-size:12px;font-weight:900;color:var(--wm-gray);}
+    #panel-preStudy .wm-prestudy-admin-field input,#panel-preStudy .wm-prestudy-admin-field select,#panel-preStudy .wm-prestudy-detail-grid input,#panel-preStudy .wm-prestudy-detail-grid textarea{width:100%;border:1px solid var(--wm-line);border-radius:10px;padding:9px 10px;background:#fff;font-size:13px;color:#111827;}
+    #panel-preStudy .wm-prestudy-admin-field.wide{min-width:260px;flex:1 1 320px;}
+    #panel-preStudy .wm-prestudy-admin-status{min-height:20px;margin:6px 0 12px;font-size:13px;font-weight:900;color:var(--wm-gray);}
+    #panel-preStudy .wm-prestudy-admin-status.ok{color:var(--wm-green);}
+    #panel-preStudy .wm-prestudy-admin-status.err{color:var(--wm-red);}
+    #wmPreStudyTable{min-width:1540px;}
+    #wmPreStudyTable tbody tr:nth-child(odd){background:#fff;}
+    #wmPreStudyTable tbody tr:nth-child(even){background:#eef4ff;}
+    #wmPreStudyTable tbody td{background:inherit;}
+    .wm-prestudy-open-btn{border:1px solid #93b9ef;background:#fff;color:#0d55c8;border-radius:8px;padding:7px 10px;font-size:12px;font-weight:900;cursor:pointer;white-space:nowrap;}
+    .wm-prestudy-open-btn:hover{background:#eef4ff;}
+    .wm-prestudy-status-pill{display:inline-flex;align-items:center;justify-content:center;min-width:72px;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:950;background:#f3f4f6;color:#4b5563;}
+    .wm-prestudy-status-pill.is-new{background:#fff7d6;color:#8a5b00;}
+    .wm-prestudy-status-pill.is-checked{background:#e8f1ff;color:#0d55c8;}
+    .wm-prestudy-status-pill.is-approved{background:#e7f8ed;color:#15803d;}
+    #wmPreStudyDetail{margin-top:18px;}
+    .wm-prestudy-detail-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+    .wm-prestudy-detail-id{font-size:17px;font-weight:950;color:#073b8f;}
+    .wm-prestudy-detail-meta{font-size:12px;font-weight:800;color:var(--wm-gray);}
+    .wm-prestudy-detail-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
+    .wm-prestudy-detail-grid label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:900;color:#374151;}
+    .wm-prestudy-detail-grid .wm-prestudy-full{grid-column:1/-1;}
+    .wm-prestudy-detail-grid textarea{min-height:82px;resize:vertical;}
+    .wm-prestudy-readonly{background:#f3f4f6!important;color:#6b7280!important;}
+    .wm-prestudy-detail-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--wm-line);}
+    .wm-prestudy-approve-btn{background:#15803d!important;}
+    @media(max-width:1000px){.wm-prestudy-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media(max-width:640px){.wm-prestudy-detail-grid{grid-template-columns:1fr;}.wm-prestudy-detail-grid .wm-prestudy-full{grid-column:auto;}}
+
   </style>
 </head>
 <body>
@@ -2586,9 +2618,19 @@ HTML/CSS 배치·크기·여백·폰트·아이콘·표·그래프·푸터 구�
       <div class="wm-table-wrap"><table><thead><tr><th>상담ID</th><th>학생ID</th><th>학생이름</th><th>상담일</th><th>상담자</th><th>상담대상</th><th>상담유형</th><th>상담방식</th><th>상담목적</th><th>학부모관심사항</th><th>학습특이사항</th><th>상담요약</th><th>특이사항</th><th>다음상담예정일</th><th>수정일</th></tr></thead><tbody><tr><td>CNS001</td><td>TEST001</td><td>테스트학생</td><td>2026-06-01</td><td>해나샘</td><td>학부모</td><td>정기상담</td><td>전화</td><td>학습점검</td><td>단어암기상태</td><td>복습부족</td><td>주 3회 복습 권장 및 학습습관 점검</td><td>특이사항 없음</td><td>2026-06-15</td><td>2026-06-01</td></tr></tbody></table></div>
     </section>
     <section class="wm-panel" id="panel-preStudy">
-      <h2 class="wm-panel-title">사전학습조사서 관리</h2>
-      <p class="wm-panel-desc">고객이 제출한 사전학습조사서를 LMS에서 확인·관리하는 전용 영역입니다.</p>
-      <div class="wm-note">5단계에서는 관리탭 화면만 추가합니다. 접수_DB 조회·수정·승인 기능은 6단계에서 연결합니다.</div>
+      <div class="wm-panel-title-row"><h2 class="wm-panel-title">사전학습조사서 관리</h2><p class="wm-panel-desc">전용 접수_DB의 고객 제출자료를 관리자 확인·수정·승인합니다. 승인완료 후에도 Word Mate 본체 반영은 하지 않습니다.</p></div>
+      <div class="wm-filter-box">
+        <div class="wm-filter-title">접수자료 검색</div>
+        <div class="wm-prestudy-admin-toolbar">
+          <label class="wm-prestudy-admin-field wide">검색<input id="wmPreStudyQuery" type="text" placeholder="학생이름 · 학부모 · 휴대폰 · 주문번호 · 조사서번호" /></label>
+          <label class="wm-prestudy-admin-field">처리상태<select id="wmPreStudyStatusFilter"><option value="">전체</option><option value="신규">신규</option><option value="확인완료">확인완료</option><option value="승인완료">승인완료</option></select></label>
+          <button type="button" class="wm-action-btn" id="wmPreStudySearchBtn">조회</button>
+          <button type="button" class="wm-action-btn sub" id="wmPreStudyRefreshBtn">새로고침</button>
+        </div>
+        <div id="wmPreStudyStatus" class="wm-prestudy-admin-status"></div>
+      </div>
+      <div class="wm-table-wrap"><table id="wmPreStudyTable"><thead><tr><th>접수번호</th><th>제출시각</th><th>학생이름</th><th>학교</th><th>학년</th><th>학부모</th><th>휴대폰</th><th>학습시작일</th><th>출석약속</th><th>세트약속</th><th>시작레벨</th><th>처리상태</th><th>반영상태</th><th>관리</th></tr></thead><tbody id="wmPreStudyTbody"><tr><td colspan="14">사전학습조사서 탭에 입장하면 접수자료를 조회합니다.</td></tr></tbody></table></div>
+      <div id="wmPreStudyDetail" class="wm-factory-box" style="display:none;"></div>
     </section>
     <section class="wm-panel" id="panel-learning">
       <h2 class="wm-panel-title">학습화면</h2>
@@ -5773,6 +5815,197 @@ HTML/CSS 배치·크기·여백·폰트·아이콘·표·그래프·푸터 구�
       if(button.dataset.panel === 'dev') WM_LMS_DEV_CONNECTION_LOCK_V1.REAUTH.open();
       else showPanel(button.dataset.panel);
     }));
+
+    /* ============================================================
+       WM_PRESTUDY_ADMIN_UI_V1_20260915
+       - 전용 Apps Script / 접수_DB만 사용
+       - Word Mate 본체 Code.gs 수정 없음
+       - SUPER_ADMIN / SPECIAL_ADMIN만 접근
+       - 비밀번호는 메모리에만 보관하며 새로고침 시 폐기
+       ============================================================ */
+    const WM_PRESTUDY_ADMIN_API_URL = String(window.WM_PRESTUDY_ADMIN_URL || 'https://script.google.com/macros/s/AKfycbxHZh4q-Vjmr5PsHy8r_FLpTOeQpNhIJzi6cLSUYVcGYOYf7jtXwbDuD9OGxUoeX7Au/exec').trim();
+    let WM_PRESTUDY_ADMIN_PASSWORD = '';
+    let WM_PRESTUDY_SELECTED_ID = '';
+
+    function wmPreStudyEscape_(value){
+      return String(value == null ? '' : value).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];});
+    }
+    function wmPreStudyCurrentRole_(){
+      const roleEl=document.getElementById('currentRoleText');
+      const auth=window.WM_LMS_AUTH_TEACHER || {};
+      return String((roleEl && roleEl.textContent) || auth.권한 || '').trim().toUpperCase();
+    }
+    function wmPreStudyIsAdminRole_(){ return /^(SUPER_ADMIN|SPECIAL_ADMIN)$/.test(wmPreStudyCurrentRole_()); }
+    function wmPreStudySyncMenuAccess_(){
+      const btn=document.querySelector('.wm-menu-btn[data-panel="preStudy"]');
+      if(btn) btn.style.display=wmPreStudyIsAdminRole_()?'':'none';
+      if(!wmPreStudyIsAdminRole_()){
+        const panel=document.getElementById('panel-preStudy');
+        if(panel && panel.classList.contains('active')) showPanel('dashboard');
+      }
+    }
+    function wmPreStudySetStatus_(message,isOk){
+      const el=document.getElementById('wmPreStudyStatus');
+      if(!el) return;
+      el.textContent=message || '';
+      el.className='wm-prestudy-admin-status '+(message?(isOk?'ok':'err'):'');
+    }
+    function wmEnsurePreStudyReauthModal_(){
+      let modal=document.getElementById('wmPreStudyReauthModal');
+      if(modal) return modal;
+      modal=document.createElement('div');
+      modal.id='wmPreStudyReauthModal';
+      modal.style.cssText='display:none;position:fixed;inset:0;z-index:100001;background:rgba(15,23,42,.55);padding:20px;box-sizing:border-box;align-items:center;justify-content:center;';
+      modal.innerHTML='<div style="width:100%;max-width:420px;background:#fff;border-radius:20px;padding:28px;box-shadow:0 20px 60px rgba(15,23,42,.25);">'
+        +'<div style="font-size:22px;font-weight:950;text-align:center;color:#111827;">사전학습조사서 관리자 확인</div>'
+        +'<div style="margin:8px 0 20px;text-align:center;color:#64748b;font-size:14px;line-height:1.5;">현재 LMS 관리자 계정의 비밀번호를 다시 입력하세요.</div>'
+        +'<label style="display:block;margin-bottom:14px;font-size:14px;font-weight:900;color:#111827;">교사ID<input id="wmPreStudyReauthTeacherId" type="text" readonly style="width:100%;height:50px;margin-top:7px;padding:0 14px;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:12px;background:#f8fafc;font-size:15px;"></label>'
+        +'<label style="display:block;margin-bottom:14px;font-size:14px;font-weight:900;color:#111827;">비밀번호<input id="wmPreStudyReauthPassword" type="password" maxlength="4" inputmode="numeric" autocomplete="current-password" placeholder="숫자 4자리" style="width:100%;height:50px;margin-top:7px;padding:0 14px;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:12px;font-size:15px;"></label>'
+        +'<div id="wmPreStudyReauthMessage" style="min-height:22px;margin-bottom:10px;text-align:center;font-size:13px;font-weight:900;color:#dc2626;"></div>'
+        +'<div style="display:flex;gap:10px;"><button id="wmPreStudyReauthCancel" type="button" style="flex:1;height:50px;border:0;border-radius:12px;background:#e5e7eb;color:#111827;font-size:15px;font-weight:900;cursor:pointer;">취소</button><button id="wmPreStudyReauthSubmit" type="button" style="flex:1;height:50px;border:0;border-radius:12px;background:#073b8f;color:#fff;font-size:15px;font-weight:900;cursor:pointer;">관리탭 입장</button></div></div>';
+      document.body.appendChild(modal);
+      document.getElementById('wmPreStudyReauthCancel').addEventListener('click',function(){modal.style.display='none';document.getElementById('wmPreStudyReauthPassword').value='';});
+      document.getElementById('wmPreStudyReauthSubmit').addEventListener('click',wmSubmitPreStudyReauth_);
+      document.getElementById('wmPreStudyReauthPassword').addEventListener('keydown',function(e){if(e.key==='Enter') wmSubmitPreStudyReauth_();});
+      return modal;
+    }
+    function wmPreStudyReauthMessage_(message,isOk){
+      const el=document.getElementById('wmPreStudyReauthMessage');
+      if(!el) return;
+      el.textContent=message || '';
+      el.style.color=isOk?'#15803d':'#dc2626';
+    }
+    async function wmPreStudyApi_(action,data,passwordOverride){
+      const auth=window.WM_LMS_AUTH_TEACHER || {};
+      const teacherId=String(auth.교사ID || '').trim();
+      const password=String(passwordOverride || WM_PRESTUDY_ADMIN_PASSWORD || '').trim();
+      if(!teacherId || !/^\d{4}$/.test(password)) throw new Error('관리자 재확인이 필요합니다.');
+      const payload=Object.assign({},data || {},{action:action,teacherId:teacherId,password:password});
+      const response=await fetch(WM_PRESTUDY_ADMIN_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),credentials:'omit',cache:'no-store'});
+      const result=await response.json();
+      if(!response.ok || !result || result.ok!==true) throw new Error((result && result.message) || '사전학습조사서 관리자 요청 실패');
+      return result;
+    }
+    function wmOpenPreStudyAdmin_(){
+      if(!wmPreStudyIsAdminRole_()){ alert('사전학습조사서 관리는 SUPER_ADMIN 또는 SPECIAL_ADMIN만 사용할 수 있습니다.'); return; }
+      if(WM_PRESTUDY_ADMIN_PASSWORD){ showPanel('preStudy'); wmPreStudyLoadList_(); return; }
+      const modal=wmEnsurePreStudyReauthModal_();
+      const auth=window.WM_LMS_AUTH_TEACHER || {};
+      document.getElementById('wmPreStudyReauthTeacherId').value=String(auth.교사ID || '');
+      document.getElementById('wmPreStudyReauthPassword').value='';
+      wmPreStudyReauthMessage_('');
+      modal.style.display='flex';
+      setTimeout(function(){document.getElementById('wmPreStudyReauthPassword').focus();},50);
+    }
+    async function wmSubmitPreStudyReauth_(){
+      const pwEl=document.getElementById('wmPreStudyReauthPassword');
+      const password=String(pwEl && pwEl.value || '').trim();
+      if(!/^\d{4}$/.test(password)){wmPreStudyReauthMessage_('비밀번호 숫자 4자리를 입력하세요.');return;}
+      const btn=document.getElementById('wmPreStudyReauthSubmit');
+      if(btn) btn.disabled=true;
+      wmPreStudyReauthMessage_('관리자 계정을 확인 중입니다.',true);
+      try{
+        const result=await wmPreStudyApi_('adminList',{limit:100},password);
+        WM_PRESTUDY_ADMIN_PASSWORD=password;
+        wmPreStudyReauthMessage_('확인되었습니다.',true);
+        document.getElementById('wmPreStudyReauthModal').style.display='none';
+        showPanel('preStudy');
+        wmPreStudyRenderList_(result.records || [],result.total || 0);
+      }catch(err){wmPreStudyReauthMessage_(err && err.message ? err.message : String(err));}
+      finally{if(btn) btn.disabled=false;}
+    }
+    async function wmPreStudyLoadList_(){
+      if(!WM_PRESTUDY_ADMIN_PASSWORD){wmOpenPreStudyAdmin_();return;}
+      const query=String(document.getElementById('wmPreStudyQuery')?.value || '').trim();
+      const status=String(document.getElementById('wmPreStudyStatusFilter')?.value || '').trim();
+      wmPreStudySetStatus_('접수자료 조회 중입니다.',true);
+      try{
+        const result=await wmPreStudyApi_('adminList',{query:query,status:status,limit:100});
+        wmPreStudyRenderList_(result.records || [],result.total || 0);
+      }catch(err){wmPreStudySetStatus_(err && err.message ? err.message : String(err),false);}
+    }
+    function wmPreStudyStatusPill_(status){
+      const text=String(status || '-');
+      const cls=text==='신규'?'is-new':(text==='확인완료'?'is-checked':(text==='승인완료'?'is-approved':''));
+      return '<span class="wm-prestudy-status-pill '+cls+'">'+wmPreStudyEscape_(text)+'</span>';
+    }
+    function wmPreStudyRenderList_(records,total){
+      const body=document.getElementById('wmPreStudyTbody');
+      if(!body) return;
+      if(!records.length){body.innerHTML='<tr><td colspan="14">조건에 맞는 접수자료가 없습니다.</td></tr>';wmPreStudySetStatus_('조회 0건',true);return;}
+      body.innerHTML=records.map(function(r){return '<tr>'
+        +'<td>'+wmPreStudyEscape_(r.prestudy_id)+'</td><td>'+wmPreStudyEscape_(r.submitted_at)+'</td><td>'+wmPreStudyEscape_(r.student_name)+'</td><td>'+wmPreStudyEscape_(r.school)+'</td><td>'+wmPreStudyEscape_(r.grade)+'</td><td>'+wmPreStudyEscape_(r.parent_name)+'</td><td>'+wmPreStudyEscape_(r.parent_phone)+'</td><td>'+wmPreStudyEscape_(r.start_date)+'</td><td>'+wmPreStudyEscape_(r.attendance_target)+'</td><td>'+wmPreStudyEscape_(r.set_target)+'</td><td>'+wmPreStudyEscape_(r.start_level)+'</td><td>'+wmPreStudyStatusPill_(r.processing_status)+'</td><td>'+wmPreStudyEscape_(r.wordmate_apply_status || '미반영')+'</td><td><button type="button" class="wm-prestudy-open-btn" data-prestudy-open="'+wmPreStudyEscape_(r.prestudy_id)+'">확인</button></td></tr>';}).join('');
+      body.querySelectorAll('[data-prestudy-open]').forEach(function(btn){btn.addEventListener('click',function(){wmPreStudyOpenRecord_(btn.getAttribute('data-prestudy-open'));});});
+      wmPreStudySetStatus_('조회 '+Number(total || records.length)+'건 · 최근 '+records.length+'건 표시',true);
+    }
+    async function wmPreStudyOpenRecord_(prestudyId){
+      WM_PRESTUDY_SELECTED_ID=String(prestudyId || '');
+      wmPreStudySetStatus_('상세내용 조회 중입니다.',true);
+      try{
+        const result=await wmPreStudyApi_('adminGet',{prestudy_id:WM_PRESTUDY_SELECTED_ID});
+        wmPreStudyRenderDetail_(result.record || {});
+        wmPreStudySetStatus_('상세내용을 불러왔습니다.',true);
+      }catch(err){wmPreStudySetStatus_(err && err.message ? err.message : String(err),false);}
+    }
+    function wmPreStudyField_(label,key,value,type,full,readonly){
+      const cls=full?' class="wm-prestudy-full"':'';
+      const ro=readonly?' readonly class="wm-prestudy-readonly"':'';
+      if(type==='textarea') return '<label'+cls+'>'+label+'<textarea data-prestudy-key="'+key+'"'+(readonly?' readonly class="wm-prestudy-readonly"':'')+'>'+wmPreStudyEscape_(value)+'</textarea></label>';
+      return '<label'+cls+'>'+label+'<input data-prestudy-key="'+key+'" type="'+(type||'text')+'" value="'+wmPreStudyEscape_(value)+'"'+ro+'></label>';
+    }
+    function wmPreStudyRenderDetail_(r){
+      const host=document.getElementById('wmPreStudyDetail'); if(!host) return;
+      const approved=String(r.processing_status || '')==='승인완료';
+      host.style.display='block';
+      const meta='<div class="wm-prestudy-detail-meta">제출 '+wmPreStudyEscape_(r.submitted_at)+' · 주문번호 '+wmPreStudyEscape_(r.order_id)+' · 결제일 '+wmPreStudyEscape_(r.payment_date)+' · 처리상태 '+wmPreStudyEscape_(r.processing_status)+' · 반영상태 '+wmPreStudyEscape_(r.wordmate_apply_status || '미반영')+'</div>';
+      host.innerHTML='<div class="wm-prestudy-detail-top"><div><div class="wm-prestudy-detail-id">'+wmPreStudyEscape_(r.prestudy_id)+'</div>'+meta+'</div><button type="button" class="wm-action-btn sub" id="wmPreStudyDetailClose">닫기</button></div>'
+        +'<div class="wm-prestudy-detail-grid">'
+        +wmPreStudyField_('학생이름','student_name',r.student_name)+wmPreStudyField_('학교','school',r.school)+wmPreStudyField_('학년','grade',r.grade)+wmPreStudyField_('학년·연령 기타','grade_other',r.grade_other)
+        +wmPreStudyField_('형제 여부','sibling',r.sibling)+wmPreStudyField_('형제 이름','sibling_name',r.sibling_name)+wmPreStudyField_('학부모 이름','parent_name',r.parent_name)+wmPreStudyField_('학부모 휴대폰','parent_phone',r.parent_phone)
+        +wmPreStudyField_('학생과의 관계','relation',r.relation)+wmPreStudyField_('관계 기타','relation_other',r.relation_other)+wmPreStudyField_('주소(거주지역)','region',r.region,'text',true)
+        +wmPreStudyField_('추가 보호자 사용','guardian2_enabled',r.guardian2_enabled)+wmPreStudyField_('추가 보호자 이름','guardian2_name',r.guardian2_name)+wmPreStudyField_('추가 보호자 휴대폰','guardian2_phone',r.guardian2_phone)+wmPreStudyField_('추가 보호자 관계','guardian2_relation',r.guardian2_relation)
+        +wmPreStudyField_('학습시작일','start_date',r.start_date,'date')+wmPreStudyField_('출석약속','attendance_target',r.attendance_target)+wmPreStudyField_('선택요일','available_days',r.available_days)+wmPreStudyField_('가능 시간대','available_time',r.available_time)
+        +wmPreStudyField_('세트약속','set_target',r.set_target)+wmPreStudyField_('영문타자','typing_en',r.typing_en)+wmPreStudyField_('한글타자','typing_ko',r.typing_ko)+wmPreStudyField_('시작레벨','start_level',r.start_level)
+        +wmPreStudyField_('레벨완료조건','level_complete_count',r.level_complete_count)+wmPreStudyField_('학습시작일 확인','start_date_confirm',r.start_date_confirm,'text',false,true)+wmPreStudyField_('학습단계 확인','step_confirm',r.step_confirm,'text',false,true)+wmPreStudyField_('성적표 확인','report_confirm',r.report_confirm,'text',false,true)
+        +wmPreStudyField_('환불기준 확인','refund_confirm',r.refund_confirm,'text',false,true)+wmPreStudyField_('개인정보동의','privacy_confirm',r.privacy_confirm,'text',false,true)+wmPreStudyField_('선생님 참고사항','teacher_notes',r.teacher_notes,'textarea',true)+wmPreStudyField_('기타 메시지','teacher_message',r.teacher_message,'textarea',true)
+        +wmPreStudyField_('관리자 메모','admin_note',r.admin_note,'textarea',true)
+        +'</div><div class="wm-prestudy-detail-actions"><button type="button" class="wm-action-btn sub" id="wmPreStudySaveBtn"'+(approved?' disabled':'')+'>수정저장·확인</button><button type="button" class="wm-action-btn wm-prestudy-approve-btn" id="wmPreStudyApproveBtn"'+(approved?' disabled':'')+'>'+(approved?'승인완료':'승인')+'</button></div>';
+      host.querySelectorAll('[data-prestudy-key]').forEach(function(el){if(approved && !el.readOnly) el.readOnly=true;});
+      document.getElementById('wmPreStudyDetailClose').addEventListener('click',function(){host.style.display='none';});
+      document.getElementById('wmPreStudySaveBtn').addEventListener('click',function(){wmPreStudySaveCurrent_('adminSave');});
+      document.getElementById('wmPreStudyApproveBtn').addEventListener('click',function(){wmPreStudySaveCurrent_('adminApprove');});
+      host.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    function wmPreStudyCollectUpdates_(){
+      const host=document.getElementById('wmPreStudyDetail'); const updates={};
+      if(!host) return updates;
+      host.querySelectorAll('[data-prestudy-key]').forEach(function(el){if(!el.readOnly) updates[el.getAttribute('data-prestudy-key')]=el.value;});
+      return updates;
+    }
+    async function wmPreStudySaveCurrent_(action){
+      if(!WM_PRESTUDY_SELECTED_ID) return;
+      const isApprove=action==='adminApprove';
+      if(isApprove && !confirm('이 사전학습조사서를 승인완료 처리하시겠습니까?\n승인 후에도 Word Mate 본체에는 아직 반영되지 않습니다.')) return;
+      wmPreStudySetStatus_(isApprove?'승인 처리 중입니다.':'수정내용 저장 중입니다.',true);
+      try{
+        const result=await wmPreStudyApi_(action,{prestudy_id:WM_PRESTUDY_SELECTED_ID,updates:wmPreStudyCollectUpdates_()});
+        wmPreStudyRenderDetail_(result.record || {});
+        await wmPreStudyLoadList_();
+        wmPreStudySetStatus_(result.message || (isApprove?'승인완료되었습니다.':'저장되었습니다.'),true);
+      }catch(err){wmPreStudySetStatus_(err && err.message ? err.message : String(err),false);}
+    }
+    (function wmBindPreStudyAdminUi_(){
+      const preStudyBtn=document.querySelector('.wm-menu-btn[data-panel="preStudy"]');
+      if(preStudyBtn) preStudyBtn.addEventListener('click',function(event){event.preventDefault();event.stopImmediatePropagation();wmOpenPreStudyAdmin_();},true);
+      roleButtons.forEach(function(btn){btn.addEventListener('click',function(){setTimeout(wmPreStudySyncMenuAccess_,0);});});
+      document.addEventListener('DOMContentLoaded',function(){
+        setTimeout(wmPreStudySyncMenuAccess_,0);
+        document.getElementById('wmPreStudySearchBtn')?.addEventListener('click',wmPreStudyLoadList_);
+        document.getElementById('wmPreStudyRefreshBtn')?.addEventListener('click',function(){document.getElementById('wmPreStudyQuery').value='';document.getElementById('wmPreStudyStatusFilter').value='';wmPreStudyLoadList_();});
+        document.getElementById('wmPreStudyQuery')?.addEventListener('keydown',function(e){if(e.key==='Enter') wmPreStudyLoadList_();});
+      });
+    })();
+
     let WM_STUDENT_MANAGE_ROWS = [];
     let WM_STUDENT_LOAD_PROMISE = null;
     const WM_STUDENT_DETAIL_LOADED_IDS = new Set();
