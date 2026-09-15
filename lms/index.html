@@ -5881,7 +5881,10 @@ loadReports();
       if(!/^\d{4}$/.test(password)) throw new Error('보안을 위해 LMS에서 다시 로그인한 후 사전학습조사서 메뉴를 열어 주세요.');
       const payload=Object.assign({},data || {},{action:action,teacherId:teacherId,password:password});
       const response=await fetch(WM_PRESTUDY_ADMIN_API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),credentials:'omit',cache:'no-store',redirect:'follow'});
-      const result=await response.json();
+      const responseText=await response.text();
+      let result=null;
+      try{result=JSON.parse(responseText || '{}');}
+      catch(_){throw new Error('사전학습조사서 관리자 API 응답 형식 오류');}
       if(!response.ok || !result || result.ok!==true) throw new Error((result && result.message) || '사전학습조사서 관리자 요청 실패');
       return result;
     }
